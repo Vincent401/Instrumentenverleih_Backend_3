@@ -1,5 +1,6 @@
 package com.example.Instrumentenverleih_Backend_3.kunden;
 
+import com.example.Instrumentenverleih_Backend_3.EmailSenderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -12,10 +13,22 @@ import java.util.Optional;
 public class KundeController {
     @Autowired
     KundeRepository kundeRepository;
+    @Autowired
+    private EmailSenderService senderService;
 
     @PostMapping("")
     public void createKunde(@RequestBody kunde kunde){
         kundeRepository.save(kunde);
+        sendMail(kunde.getEmail(), kunde.getName());
+    }
+
+    public void sendMail(String toEmail, String Name){
+        senderService.sendEmail(toEmail,
+                "Vielen dank für ihre Bestellung",
+                "Hallo " + Name +", \n \n" +
+                        "vielen dank, dass sie sich für ein Instrument von uns entschieden haben. \n" +
+                        "Ihr Instrument wird schnellstmöglich vorbereitet und sollte sie innerhalb von wenigen Werktagen erreichen. \n" +
+                        "\n Liebe Grüße ihr \nInstrumentenverleih Mannheim");
     }
 
     @GetMapping("/{kundenId}")
